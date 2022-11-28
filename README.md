@@ -20,7 +20,7 @@ Template is written with django 3.2.16 and python 3 in mind.
 
 * Printing planning
 
-[comment]: <> (# Usage
+<!-- # Usage
 
 To use this template to start your own project:
 
@@ -83,4 +83,4 @@ Then simply apply the migrations:
 
 You can now run the development server:
 
-    $ python manage.py runserver)
+    $ python manage.py runserver -->
