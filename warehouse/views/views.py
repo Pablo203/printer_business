@@ -1,19 +1,12 @@
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import MainCategory, Category, Position
-from .forms import addCategoryForm
+from ..models import MainCategory, Category, Position
+from ..forms import addCategoryForm
 # Create your views here.
 
 def warehouseMain(request):
     return render(request, 'warehouseMain.html', {})
-
-def showPositions(request, mainCategoryId, categoryId):
-    positions = Position.objects.filter(category=categoryId)
-    return render(request, 'warehouseElements.html', {'positions': positions})
-
-def addPosition(request):
-    pass
 
 def addMainCategory(request):
     if request.method == "POST":
