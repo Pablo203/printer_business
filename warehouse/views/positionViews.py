@@ -7,7 +7,7 @@ from ..forms import addCategoryForm
 
 def showPositions(request, mainCategoryId, categoryId):
     positions = Position.objects.filter(category=categoryId)
-    return render(request, 'warehouseElements.html', {'positions': positions})
+    return render(request, 'warehouseElements.html', {'positions': positions, 'mainCategoryId': mainCategoryId, 'categoryId': categoryId})
 
 def showPosition(request, mainCategoryId, categoryId, positionId):
     position = Position.objects.get(id=positionId)
@@ -32,8 +32,7 @@ def addPositionExecute(request, mainCategoryId, categoryId):
             data = dataHolder
         )
         position.save()
-    return render(request, 'test.html', {'request': data, 'holder': dataHolder})
-
+    return HttpResponseRedirect(reverse('showPositions', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId}))
 
 def showCategoryValues(request, mainCategoryId, categoryId):
     properties = CategoryValue.objects.filter(category=categoryId)
