@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from ..models import MainCategory, Category, Position
+from ..models import MainCategory, Category, Position, CategoryValue
 from ..forms import addCategoryForm
 # Create your views here.
 

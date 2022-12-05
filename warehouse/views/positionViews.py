@@ -3,16 +3,17 @@ from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from ..models import MainCategory, Category, Position, CategoryValue
 from ..forms import addCategoryForm
+from django.views.generic import ListView, DetailView
 # Create your views here.
 
-def showPositions(request, mainCategoryId, categoryId):
-    positions = Position.objects.filter(category=categoryId)
-    return render(request, 'warehouseElements.html', {'positions': positions, 'mainCategoryId': mainCategoryId, 'categoryId': categoryId})
 
-def showPosition(request, mainCategoryId, categoryId, positionId):
-    position = Position.objects.get(id=positionId)
-    return render(request, 'warehousePosition.html',
-    {'position': position})
+class PositionDetailView(DetailView):
+    model = Position
+    template_name = "position_detail.html"
+    context_object_name = "position"
+
+    def get_queryset(self):
+        return Position.objects.filter(id=self.kwargs["pk"])
 
 def addPosition(request, mainCategoryId, categoryId):
     categoryValues = CategoryValue.objects.filter(category=categoryId)
@@ -34,6 +35,26 @@ def addPositionExecute(request, mainCategoryId, categoryId):
         position.save()
     return HttpResponseRedirect(reverse('showPositions', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId}))
 
-def showCategoryValues(request, mainCategoryId, categoryId):
-    properties = CategoryValue.objects.filter(category=categoryId)
-    return HttpResponse(properties)
+class PositionsList(ListView):
+    model = Position
+    template_name = "position_list.html"
+
+    context_object_name = "positions"
+
+    def get_queryset(self):
+        return Position.objects.filter(category=self.kwargs['categoryId'])
+
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        context['mainCategoryId'] = self.kwargs['mainCategoryId']
+        context['categoryId'] = self.kwargs['categoryId']
+        return context
+
+class CategoryValuesList(ListView):
+    model = CategoryValue
+    template_name = 'categoryvalue_list.html'
+
+    context_object_name = "categories"
+
+    def get_queryset(self):
+        return CategoryValue.objects.filter(category=self.kwargs['categoryId'])
