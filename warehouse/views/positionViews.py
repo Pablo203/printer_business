@@ -72,3 +72,42 @@ class CategoryValuesList(ListView):
 
     def get_queryset(self):
         return CategoryValue.objects.filter(category=self.kwargs['categoryId'])
+
+def editPosition(request, mainCategoryId, categoryId, pk):
+    position = Position.objects.get(id=pk)
+    categoryValues = CategoryValue.objects.filter(category=Category.objects.get(id=categoryId))
+    #return HttpResponse(position.data['test'])
+    return render(request, 'warehouseEditPosition.html', {'categoryValues': categoryValues, 'position': position})
+
+def editPositionExecute(request, mainCategoryId, categoryId, pk):
+    if request.method == "POST":
+        data = request.POST
+        position = Position.objects.get(id=pk)
+
+        dataHolder = {}
+        for key, value in data.items():
+            if key != 'csrfmiddlewaretoken' and key != 'name' and key != 'imgInput':
+                dataHolder[key] = value
+
+        position.name = data['name']
+        position.data = dataHolder
+        position.save()
+    return HttpResponseRedirect(reverse('showPosition', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId, 'pk': pk}))
+
+def showCategoryDeleteView(request, mainCategoryId, categoryId, propertyName):
+    category = Category.objects.get(id=categoryId)
+    return render(request, 'confirmCategoryValueDelete.html', {'propertyName': propertyName, 'category': category})
+
+def showCategoryDeleteExecute(request, mainCategoryId, categoryId, propertyName):
+    positions = Position.objects.filter(category=Category.objects.get(id=categoryId))
+    positionsData = []
+    for position in positions:
+        if position.data[propertyName]:
+            position.data.pop(propertyName)
+            position.save()
+        positionsData.append(position.data)
+    categoryValue = CategoryValue.objects.filter(propertyName=propertyName)
+    if categoryValue.count():
+        categoryValue.delete()
+    #return HttpResponse(positionsData)
+    return HttpResponseRedirect(reverse('showCategoryValues', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId}))
