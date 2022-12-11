@@ -109,5 +109,22 @@ def showCategoryDeleteExecute(request, mainCategoryId, categoryId, propertyName)
     categoryValue = CategoryValue.objects.filter(propertyName=propertyName)
     if categoryValue.count():
         categoryValue.delete()
-    #return HttpResponse(positionsData)
+    return HttpResponseRedirect(reverse('showCategoryValues', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId}))
+    
+def showCategoryCreateView(request, mainCategoryId, categoryId):
+    return render(request, 'categoryValueCreate.html', {'mainCategoryId': mainCategoryId ,'categoryId': categoryId})
+
+
+def showCategoryCreateExecute(request, mainCategoryId, categoryId):
+    if request.method == "POST":
+        form = addCategoryForm(request.POST)
+        if form.is_valid():
+            category_value = CategoryValue(
+                propertyName = form.cleaned_data['name'],
+                category = Category.objects.get(id=categoryId)
+            )
+            category_value.save()
+            positions = Position.objects.filter(category=categoryId)
+            for position in positions:
+                position.data[form.cleaned_data['name']] = ""
     return HttpResponseRedirect(reverse('showCategoryValues', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId}))

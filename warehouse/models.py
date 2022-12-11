@@ -16,7 +16,6 @@ class Category(models.Model):
 
 class CategoryValue(models.Model):
     propertyName = models.CharField(max_length=255)
-    propertyValue = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.CASCADE)    
 
     def __str__(self):
