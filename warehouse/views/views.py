@@ -4,6 +4,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from ..models import MainCategory, Category, Position, CategoryValue
 from ..forms import addCategoryForm
 from django.views.generic import ListView
+import logging
+_logger = logging.getLogger('django')
 # Create your views here.
 
 def warehouseMain(request):
@@ -75,6 +77,12 @@ def showCategoryCreateExecute(request, mainCategoryId, categoryId):
             positions = Position.objects.filter(category=categoryId)
             for position in positions:
                 position.data[form.cleaned_data['name']] = ""
+                position.save()
     return HttpResponseRedirect(reverse('showCategoryValues', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId}))
 
 
+def deleteCategory(request, mainCategoryId, categoryId):
+    return HttpResponse("CHECK")
+
+def deleteCategoryExecute(request, mainCategoryId, categoryId):
+    pass

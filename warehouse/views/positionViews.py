@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from ..models import MainCategory, Category, Position, CategoryValue
 from ..forms import addCategoryForm, UploadFileForm, addCategoryValueForm
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 import os
 import logging
 _logger = logging.getLogger('django')
@@ -18,9 +18,16 @@ class PositionDetailView(DetailView):
     def get_queryset(self):
         return Position.objects.filter(id=self.kwargs["pk"])
 
-def addPosition(request, mainCategoryId, categoryId):
-    categoryValues = CategoryValue.objects.filter(category=categoryId)
-    return render(request, 'warehouseAddPosition.html', {'categoryValues': categoryValues, 'mainCategoryId': mainCategoryId, 'categoryId': categoryId})
+
+class PositionAdd(TemplateView):
+    template_name = 'warehouseAddPosition.html'
+
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        context['mainCategoryId'] = self.kwargs['mainCategoryId']
+        context['categoryId'] = self.kwargs['categoryId']
+        context['categoryValues'] = CategoryValue.objects.filter(category=self.kwargs['categoryId'])
+        return context
 
 def handle_uploaded_file(request, f, positionId):
     name = f.name
@@ -71,11 +78,16 @@ class PositionsList(ListView):
         context['categoryId'] = self.kwargs['categoryId']
         return context
 
+class EditPosition(TemplateView):
+    template_name = 'warehouseEditPosition.html'
 
-def editPosition(request, mainCategoryId, categoryId, pk):
-    position = Position.objects.get(id=pk)
-    categoryValues = CategoryValue.objects.filter(category=Category.objects.get(id=categoryId))
-    return render(request, 'warehouseEditPosition.html', {'categoryValues': categoryValues, 'position': position})
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        context['mainCategoryId'] = self.kwargs['mainCategoryId']
+        context['categoryId'] = self.kwargs['categoryId']
+        context['categoryValues'] = CategoryValue.objects.filter(category=Category.objects.get(id=self.kwargs['categoryId']))
+        context['position'] = Position.objects.get(id=self.kwargs['pk'])
+        return context
 
 def editPositionExecute(request, mainCategoryId, categoryId, pk):
     if request.method == "POST":
@@ -98,3 +110,17 @@ def editPositionExecute(request, mainCategoryId, categoryId, pk):
 
     return HttpResponseRedirect(reverse('showPosition', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId, 'pk': pk}))
 
+class DeletePosition(TemplateView):
+    template_name = 'positionDelete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['mainCategoryId'] = self.kwargs['mainCategoryId']
+        context['categoryId'] = self.kwargs['categoryId']
+        context['position'] = Position.objects.get(id=self.kwargs['pk'])
+        return context
+
+def deletePositionExecute(request, mainCategoryId, categoryId, pk):
+    position = Position.objects.get(id=pk)
+    position.delete()
+    return HttpResponseRedirect(reverse('showPositions', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId}))
