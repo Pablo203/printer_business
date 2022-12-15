@@ -3,13 +3,12 @@ from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from ..models import MainCategory, Category, Position, CategoryValue
 from ..forms import addCategoryForm
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 import logging
 _logger = logging.getLogger('django')
 # Create your views here.
-
-def warehouseMain(request):
-    return render(request, 'warehouseMain.html', {})
+class WarehouseMain(TemplateView):
+    template_name = 'warehouseMain.html'
 
 def addMainCategory(request):
     if request.method == "POST":
@@ -44,9 +43,14 @@ class CategoryValuesList(ListView):
     def get_queryset(self):
         return CategoryValue.objects.filter(category=self.kwargs['categoryId'])
 
-def showCategoryDeleteView(request, mainCategoryId, categoryId, propertyName):
-    category = Category.objects.get(id=categoryId)
-    return render(request, 'confirmCategoryValueDelete.html', {'propertyName': propertyName, 'category': category})
+class CategoryValuesDelete(TemplateView):
+    template_name = 'confirmCategoryValueDelete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['propertyName'] = self.kwargs['propertyName']
+        context['category'] = Category.objects.get(id=self.kwargs['categoryId'])
+        return context
 
 def showCategoryDeleteExecute(request, mainCategoryId, categoryId, propertyName):
     positions = Position.objects.filter(category=Category.objects.get(id=categoryId))
@@ -60,10 +64,15 @@ def showCategoryDeleteExecute(request, mainCategoryId, categoryId, propertyName)
     if categoryValue.count():
         categoryValue.delete()
     return HttpResponseRedirect(reverse('showCategoryValues', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId}))
-    
-def showCategoryCreateView(request, mainCategoryId, categoryId):
-    return render(request, 'categoryValueCreate.html', {'mainCategoryId': mainCategoryId ,'categoryId': categoryId})
 
+class CategoryValuesCreate(TemplateView):
+    template_name = 'categoryValueCreate.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['mainCategoryId'] = self.kwargs['mainCategoryId']
+        context['categoryId'] = self.kwargs['categoryId']
+        return context
 
 def showCategoryCreateExecute(request, mainCategoryId, categoryId):
     if request.method == "POST":

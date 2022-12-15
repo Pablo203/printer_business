@@ -4,7 +4,7 @@ from .views import views, positionViews
 urlpatterns = [
      
 
-    path('', views.warehouseMain, name='warehouseMain'),
+    path('', views.WarehouseMain.as_view(), name='warehouseMain'),
     path('addMainCategory/', views.addMainCategory, name='addMainCategory'),
     path('<int:mainCategoryId>/addSubCategory/', views.addSubCategory, name='addSubCategory'),
     
@@ -15,9 +15,10 @@ urlpatterns = [
     path('<int:mainCategoryId>/<int:categoryId>/deleteCategory/', views.deleteCategory, name='deleteCategory'),
     path('<int:mainCategoryId>/<int:categoryId>/deleteCategory/execute', views.deleteCategoryExecute, name='deleteCategoryExecute'),
     path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/', views.CategoryValuesList.as_view(), name='showCategoryValues'),
-    path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/create', views.showCategoryCreateView, name='categoryValueCreate'),
+    path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/create', views.CategoryValuesCreate.as_view(), name='categoryValueCreate'),
     path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/confirmCreate', views.showCategoryCreateExecute, name='categoryValueCreateConfirm'),
-    path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/<str:propertyName>/delete', views.showCategoryDeleteView, name='categoryValueDelete'),
+    path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/<str:propertyName>/delete', views.CategoryValuesDelete.as_view(), name='categoryValueDelete'),
+    # path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/<str:propertyName>/delete', views.showCategoryDeleteView, name='categoryValueDelete'),
     path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/<str:propertyName>/confirmDelete', views.showCategoryDeleteExecute, name='categoryValueDeleteConfirm'),
 
     path('<int:mainCategoryId>/<int:categoryId>/<slug:pk>/editPosition/', positionViews.EditPosition.as_view(), name='editPosition'),
