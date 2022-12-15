@@ -12,13 +12,12 @@ urlpatterns = [
  
     path('<int:mainCategoryId>/<int:categoryId>/addPosition/', positionViews.PositionAdd.as_view(), name='addPosition'),
     path('<int:mainCategoryId>/<int:categoryId>/addPosition/execute/', positionViews.addPositionExecute, name='addPositionExecute'),
-    path('<int:mainCategoryId>/<int:categoryId>/deleteCategory/', views.deleteCategory, name='deleteCategory'),
+    path('<int:mainCategoryId>/<int:categoryId>/deleteCategory/', views.CategoryDelete.as_view(), name='deleteCategory'),
     path('<int:mainCategoryId>/<int:categoryId>/deleteCategory/execute', views.deleteCategoryExecute, name='deleteCategoryExecute'),
     path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/', views.CategoryValuesList.as_view(), name='showCategoryValues'),
     path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/create', views.CategoryValuesCreate.as_view(), name='categoryValueCreate'),
     path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/confirmCreate', views.showCategoryCreateExecute, name='categoryValueCreateConfirm'),
     path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/<str:propertyName>/delete', views.CategoryValuesDelete.as_view(), name='categoryValueDelete'),
-    # path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/<str:propertyName>/delete', views.showCategoryDeleteView, name='categoryValueDelete'),
     path('<int:mainCategoryId>/<int:categoryId>/showCategoryValues/<str:propertyName>/confirmDelete', views.showCategoryDeleteExecute, name='categoryValueDeleteConfirm'),
 
     path('<int:mainCategoryId>/<int:categoryId>/<slug:pk>/editPosition/', positionViews.EditPosition.as_view(), name='editPosition'),

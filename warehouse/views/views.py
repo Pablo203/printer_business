@@ -89,9 +89,17 @@ def showCategoryCreateExecute(request, mainCategoryId, categoryId):
                 position.save()
     return HttpResponseRedirect(reverse('showCategoryValues', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId}))
 
+class CategoryDelete(TemplateView):
+    template_name = 'categoryDelete.html'
 
-def deleteCategory(request, mainCategoryId, categoryId):
-    return HttpResponse("CHECK")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['mainCategoryId'] = self.kwargs['mainCategoryId']
+        context['categoryId'] = self.kwargs['categoryId']
+        context['category'] = Category.objects.get(id=self.kwargs['categoryId'])
+        return context
 
 def deleteCategoryExecute(request, mainCategoryId, categoryId):
-    pass
+    category = Category.objects.get(id=categoryId)
+    category.delete()
+    return HttpResponseRedirect(reverse('warehouseMain'))
