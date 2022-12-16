@@ -24,8 +24,6 @@ class PositionAdd(TemplateView):
 
     def get_context_data(self, **kwargs) :
         context = super().get_context_data(**kwargs)
-        context['mainCategoryId'] = self.kwargs['mainCategoryId']
-        context['categoryId'] = self.kwargs['categoryId']
         context['categoryValues'] = CategoryValue.objects.filter(category=self.kwargs['categoryId'])
         return context
 
@@ -72,19 +70,11 @@ class PositionsList(ListView):
     def get_queryset(self):
         return Position.objects.filter(category=self.kwargs['categoryId'])
 
-    def get_context_data(self, **kwargs) :
-        context = super().get_context_data(**kwargs)
-        context['mainCategoryId'] = self.kwargs['mainCategoryId']
-        context['categoryId'] = self.kwargs['categoryId']
-        return context
-
 class EditPosition(TemplateView):
     template_name = 'warehouseEditPosition.html'
 
     def get_context_data(self, **kwargs) :
         context = super().get_context_data(**kwargs)
-        context['mainCategoryId'] = self.kwargs['mainCategoryId']
-        context['categoryId'] = self.kwargs['categoryId']
         context['categoryValues'] = CategoryValue.objects.filter(category=Category.objects.get(id=self.kwargs['categoryId']))
         context['position'] = Position.objects.get(id=self.kwargs['pk'])
         return context
@@ -115,8 +105,6 @@ class DeletePosition(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['mainCategoryId'] = self.kwargs['mainCategoryId']
-        context['categoryId'] = self.kwargs['categoryId']
         context['position'] = Position.objects.get(id=self.kwargs['pk'])
         return context
 

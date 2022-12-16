@@ -48,7 +48,6 @@ class CategoryValuesDelete(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['propertyName'] = self.kwargs['propertyName']
         context['category'] = Category.objects.get(id=self.kwargs['categoryId'])
         return context
 
@@ -67,12 +66,6 @@ def showCategoryDeleteExecute(request, mainCategoryId, categoryId, propertyName)
 
 class CategoryValuesCreate(TemplateView):
     template_name = 'categoryValueCreate.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['mainCategoryId'] = self.kwargs['mainCategoryId']
-        context['categoryId'] = self.kwargs['categoryId']
-        return context
 
 def showCategoryCreateExecute(request, mainCategoryId, categoryId):
     if request.method == "POST":
@@ -94,8 +87,6 @@ class CategoryDelete(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['mainCategoryId'] = self.kwargs['mainCategoryId']
-        context['categoryId'] = self.kwargs['categoryId']
         context['category'] = Category.objects.get(id=self.kwargs['categoryId'])
         return context
 
