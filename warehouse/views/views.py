@@ -39,7 +39,7 @@ class CategoryValuesList(ListView):
     template_name = 'categoryvalue_list.html'
 
     context_object_name = "categoryValues"
-
+    
     def get_queryset(self):
         return CategoryValue.objects.filter(category=self.kwargs['categoryId'])
 

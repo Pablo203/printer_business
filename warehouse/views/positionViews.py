@@ -67,6 +67,12 @@ class PositionsList(ListView):
 
     context_object_name = "positions"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['mainCategoryId'] = self.kwargs['mainCategoryId']
+        context['categoryId'] = self.kwargs['categoryId']
+        return context
+
     def get_queryset(self):
         return Position.objects.filter(category=self.kwargs['categoryId'])
 
