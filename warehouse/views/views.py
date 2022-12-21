@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.contrib import messages
+from django.db import IntegrityError
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from ..models import MainCategory, Category, Position, CategoryValue
@@ -18,6 +20,10 @@ def addMainCategory(request):
                 name = form.cleaned_data['name'],
             )
             mainCategory.save()
+            Category(
+                name="hide",
+                topCategory=mainCategory
+            )
     
     return HttpResponseRedirect(reverse('warehouseMain'))
 
@@ -26,22 +32,32 @@ def addSubCategory(request, mainCategoryId):
         form = addCategoryForm(request.POST)
         mainCategory = MainCategory.objects.get(id=mainCategoryId)
         if form.is_valid():
-            category = Category(
-                name = form.cleaned_data['name'],
-                topCategory = mainCategory
-            )
-            category.save()
+            try:
+                category = Category(
+                    name = form.cleaned_data['name'],
+                    topCategory = mainCategory
+                )
+                category.save()
+            except IntegrityError:
+                messages.add_message(request, messages.ERROR, "Category with this name already exists")
     
     return HttpResponseRedirect(reverse('warehouseMain'))
 
 class CategoryValuesList(ListView):
     model = CategoryValue
     template_name = 'categoryvalue_list.html'
-
-    context_object_name = "categoryValues"
     
-    def get_queryset(self):
-        return CategoryValue.objects.filter(category=self.kwargs['categoryId'])
+    # def get_queryset(self):
+    #     return CategoryValue.objects.filter(category=self.kwargs['categoryId'])
+        
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['mainCategoryId'] = self.kwargs['mainCategoryId']
+        context['categoryId'] = self.kwargs['categoryId']
+        context['categoryValues'] = CategoryValue.objects.filter(category=self.kwargs['categoryId'])
+        return context
+
 
 class CategoryValuesDelete(TemplateView):
     template_name = 'confirmCategoryValueDelete.html'
@@ -71,15 +87,18 @@ def showCategoryCreateExecute(request, mainCategoryId, categoryId):
     if request.method == "POST":
         form = addCategoryForm(request.POST)
         if form.is_valid():
-            category_value = CategoryValue(
-                propertyName = form.cleaned_data['name'],
-                category = Category.objects.get(id=categoryId)
-            )
-            category_value.save()
-            positions = Position.objects.filter(category=categoryId)
-            for position in positions:
-                position.data[form.cleaned_data['name']] = ""
-                position.save()
+            if CategoryValue.objects.filter(propertyName=form.cleaned_data['name']).exists():
+                messages.add_message(request, messages.ERROR, "Category field with this name already exists")
+            else:
+                category_value = CategoryValue(
+                    propertyName = form.cleaned_data['name'],
+                    category = Category.objects.get(id=categoryId)
+                )
+                category_value.save()
+                positions = Position.objects.filter(category=categoryId)
+                for position in positions:
+                    position.data[form.cleaned_data['name']] = ""
+                    position.save()
     return HttpResponseRedirect(reverse('showCategoryValues', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId}))
 
 class CategoryDelete(TemplateView):
@@ -93,4 +112,5 @@ class CategoryDelete(TemplateView):
 def deleteCategoryExecute(request, mainCategoryId, categoryId):
     category = Category.objects.get(id=categoryId)
     category.delete()
+
     return HttpResponseRedirect(reverse('warehouseMain'))
