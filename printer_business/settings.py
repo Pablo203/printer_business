@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'warehouse',
+    'userAuth',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +57,11 @@ ROOT_URLCONF = 'printer_business.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "templates"), os.path.join(BASE_DIR, "templates/warehouse")],
+        'DIRS': [
+            os.path.join(BASE_DIR, "templates"), 
+            os.path.join(BASE_DIR, "templates/warehouse"),
+            os.path.join(BASE_DIR, "templates/auth"),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -86,6 +91,7 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
+LOGIN_URL = '/login/'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

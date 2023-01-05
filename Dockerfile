@@ -12,7 +12,7 @@ RUN pip install -r requirements.txt
 
 COPY . /app/
 
-ENV DJANGO_SETTINGS_MODULE=myproject.settings
+ENV DJANGO_SETTINGS_MODULE=printer_business.settings
 ENV PYTHONPATH=/app
 RUN python3 manage.py migrate
 
