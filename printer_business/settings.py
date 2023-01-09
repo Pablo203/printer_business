@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'phone_field',
     'warehouse',
     'userAuth',
+    'contacts',
 ]
 
 MIDDLEWARE = [
@@ -61,6 +63,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, "templates"), 
             os.path.join(BASE_DIR, "templates/warehouse"),
             os.path.join(BASE_DIR, "templates/auth"),
+            os.path.join(BASE_DIR, "templates/contacts"),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
