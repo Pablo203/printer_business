@@ -6,6 +6,7 @@ from ..forms import addCategoryForm, UploadFileForm, addCategoryValueForm
 from django.views.generic import ListView, DetailView, TemplateView
 import os
 import logging
+from PIL import Image
 _logger = logging.getLogger('django')
 # Create your views here.
 
@@ -29,6 +30,7 @@ class PositionAdd(TemplateView):
 
 def handle_uploaded_file(request, f, positionId):
     name = f.name
+
     position = Position.objects.get(id=positionId)
     if os.path.isfile('/home/a4ch3r/Documents/printer_business/static/positionImgs/%s' % name):
         position.imagePath = '/static/positionImgs/%s' % name

@@ -1,1 +1,2 @@
 django==3.2.16
+django-phone-field==1.8.1

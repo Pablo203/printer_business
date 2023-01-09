@@ -24,7 +24,7 @@ class CategoryValue(models.Model):
 class Position(models.Model):
     name = models.CharField(max_length=100)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    imagePath = models.CharField(max_length=200, default='/static/positionImgs/no-product-image.png')
+    imagePath = models.CharField(max_length=200, default='/static/positionImgs/no-image.png')
     amount = models.IntegerField(default=0)
     data = models.JSONField(default=dict)
 
