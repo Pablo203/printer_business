@@ -13,6 +13,9 @@ class ContactsList(ListView):
     template_name = 'contact_list.html'
     context_object_name = 'contacts'
 
+    def get_queryset(self):
+        return Contact.objects.all().order_by('name')
+
 class ContactCreate(TemplateView):
     template_name = 'contact_create.html'
 
@@ -55,20 +58,13 @@ class ContactDetailEdit(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        contact = Contact.objects.get(id=self.kwargs['pk'])
-        context['form'] = ContactForm(initial={
-            'name': contact.name,
-            'email': contact.email,
-            'phone': contact.phone,
-            'street': contact.street,
-            'city': contact.city,
-            'code': contact.code
-        })
+        context['contact'] = Contact.objects.get(id=self.kwargs['pk'])
         return context
 
 def contactEditExecute(request, pk):
     if request.method == "POST":
         form = ContactForm(request.POST)
+        _logger.info("FED INFO")
         if form.is_valid():
             contact = Contact.objects.get(id=pk)
             contact.name = form.cleaned_data['name']

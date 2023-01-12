@@ -25,4 +25,5 @@ urlpatterns = [
     path('<int:mainCategoryId>/<int:categoryId>/<slug:pk>/deletePosition/', positionViews.DeletePosition.as_view(), name='deletePosition'),
     path('<int:mainCategoryId>/<int:categoryId>/<slug:pk>/deletePositionExecute/', positionViews.deletePositionExecute, name='deletePositionExecute'),
     path('<int:mainCategoryId>/<int:categoryId>/<slug:pk>/', positionViews.PositionDetailView.as_view(), name='showPosition'),
+    path('<int:mainCategoryId>/<int:categoryId>/<slug:pk>/<str:vendor>/<str:price>', positionViews.deleteVendor, name='removeVendor'),
 ]

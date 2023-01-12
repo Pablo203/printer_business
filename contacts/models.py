@@ -5,8 +5,8 @@ from phone_field import PhoneField
 class Contact(models.Model):
     name = models.CharField(max_length=200, unique=True)
     email = models.EmailField(max_length=150)
-    phone = PhoneField()
-    photoPath = models.CharField(max_length=100, default='/static/contacts/no-image.png')
+    phone = models.CharField(max_length=15, default='')
+    photoPath = models.CharField(max_length=100, default='/static/contacts/no-user-photo.png')
     
     street = models.CharField(max_length=100)
     city = models.CharField(max_length=100)

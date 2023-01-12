@@ -1,12 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from ..models import MainCategory, Category, Position, CategoryValue
+from ..models import MainCategory, Category, Position, CategoryValue, Vendor
+from contacts.models import Contact
 from ..forms import addCategoryForm, UploadFileForm, addCategoryValueForm
 from django.views.generic import ListView, DetailView, TemplateView
 import os
 import logging
-from PIL import Image
 _logger = logging.getLogger('django')
 # Create your views here.
 
@@ -18,6 +18,12 @@ class PositionDetailView(DetailView):
 
     def get_queryset(self):
         return Position.objects.filter(id=self.kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        position = Position.objects.get(id=self.kwargs["pk"])
+        context['vendors'] = Vendor.objects.filter(product=position)
+        return context
 
 
 class PositionAdd(TemplateView):
@@ -83,6 +89,9 @@ class EditPosition(TemplateView):
 
     def get_context_data(self, **kwargs) :
         context = super().get_context_data(**kwargs)
+        position = Position.objects.get(id=self.kwargs["pk"])
+        context['allVendors'] = Contact.objects.all()
+        context['vendors'] = Vendor.objects.filter(product=position)
         context['categoryValues'] = CategoryValue.objects.filter(category=Category.objects.get(id=self.kwargs['categoryId']))
         context['position'] = Position.objects.get(id=self.kwargs['pk'])
         return context
@@ -93,10 +102,27 @@ def editPositionExecute(request, mainCategoryId, categoryId, pk):
         position = Position.objects.get(id=pk)
 
         dataHolder = {}
+        vendorsHolder = []
+        
         skipKeys = ['csrfmiddlewaretoken', 'name', 'amount']
         for key, value in data.items():
-            if key not in skipKeys:
+            if key not in skipKeys and "vendor" not in key:
                 dataHolder[key] = value
+            if "vendor" in key:
+                vendorsHolder.append(value)
+
+        for i in range(0,len(vendorsHolder),2):
+            try:
+                vendor = Vendor.objects.get(product=Position.objects.get(name=position.name), vendor=Contact.objects.get(name=vendorsHolder[i]))
+                vendor.price = vendorsHolder[i+1]
+                vendor.save()
+            except:
+                newVendor = Vendor(
+                    vendor = Contact.objects.get(name=vendorsHolder[i]),
+                    product = Position.objects.get(name=position.name),
+                    price = vendorsHolder[i+1]
+                )
+                newVendor.save()
 
         position.name = data['name']
         position.amount = data['amount']
@@ -120,3 +146,11 @@ def deletePositionExecute(request, mainCategoryId, categoryId, pk):
     position = Position.objects.get(id=pk)
     position.delete()
     return HttpResponseRedirect(reverse('showPositions', kwargs={'mainCategoryId': mainCategoryId ,'categoryId': categoryId}))
+
+def deleteVendor(request, mainCategoryId, categoryId, pk, vendor, price):
+    position = Position.objects.get(id=pk)
+
+    vendors = Vendor.objects.filter(product=position, vendor=Contact.objects.get(name=vendor), price=float(price))
+    vendors.delete()
+
+    return redirect('showPosition', mainCategoryId=mainCategoryId ,categoryId=categoryId, pk=pk)
