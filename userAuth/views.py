@@ -1,15 +1,17 @@
-from django.shortcuts import render
-from django.urls import reverse
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect
-from django.contrib import messages
-from django.shortcuts import redirect
-from .forms import RegistrationUserForm
-from django.core.mail import send_mail
 # Create your views here.
 import logging
+
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail import send_mail
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.views.generic import TemplateView
+
+from .forms import RegistrationUserForm
+
 _logger = logging.getLogger('django')
 class HomePage(LoginRequiredMixin, TemplateView):
     template_name = 'home.html'
