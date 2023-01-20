@@ -1,5 +1,5 @@
-from .models import MainCategory, Category
 from .forms import addCategoryForm
+from .models import MainCategory, Category
 
 def categories_processor(request):
     form = addCategoryForm()

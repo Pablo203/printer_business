@@ -1,12 +1,16 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.http import HttpResponse, HttpResponseRedirect
-from ..models import MainCategory, Category, Position, CategoryValue, Vendor
-from contacts.models import Contact
-from ..forms import addCategoryForm, UploadFileForm, addCategoryValueForm
-from django.views.generic import ListView, DetailView, TemplateView
-import os
 import logging
+import os
+
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.views.generic import DetailView, ListView, TemplateView
+
+from contacts.models import Contact
+
+from ..forms import UploadFileForm, addCategoryForm, addCategoryValueForm
+from ..models import Category, CategoryValue, MainCategory, Position, Vendor
+
 _logger = logging.getLogger('django')
 # Create your views here.
 

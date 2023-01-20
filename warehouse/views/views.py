@@ -1,12 +1,15 @@
-from django.shortcuts import render
+import logging
+
 from django.contrib import messages
 from django.db import IntegrityError
-from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
-from ..models import MainCategory, Category, Position, CategoryValue
-from ..forms import addCategoryForm
+from django.shortcuts import render
+from django.urls import reverse
 from django.views.generic import ListView, TemplateView
-import logging
+
+from ..forms import addCategoryForm
+from ..models import Category, CategoryValue, MainCategory, Position
+
 _logger = logging.getLogger('django')
 # Create your views here.
 class WarehouseMain(TemplateView):

@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import MainCategory, Category, Position, CategoryValue, Vendor
 
 # Register your models here.
