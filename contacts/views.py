@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.views.generic import ListView, DetailView, TemplateView
-from .models import Contact
-from .forms import *
-
 import logging
+
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.views.generic import DetailView, ListView, TemplateView
+
+from .forms import *
+from .models import Contact
+
 _logger = logging.getLogger('django')
 
 # Create your views here.
