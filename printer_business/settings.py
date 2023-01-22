@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'warehouse',
     'userAuth',
     'contacts',
+    'sales',
 ]
 
 MIDDLEWARE = [

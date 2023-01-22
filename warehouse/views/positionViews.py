@@ -56,16 +56,16 @@ def addPositionExecute(request, mainCategoryId, categoryId):
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
         data = request.POST
-        dataHolder = {}
+        data_holder = {}
         skipKeys = ['csrfmiddlewaretoken', 'name', 'amount', 'imgInput']
         for key, value in data.items():
             if key not in skipKeys:
-                dataHolder[key] = value
+                data_holder[key] = value
 
         position = Position(
             name = data['name'],
             category = Category.objects.get(id=categoryId),
-            data = dataHolder
+            data = data_holder
         )
         position.save()
         
@@ -94,8 +94,15 @@ class EditPosition(TemplateView):
     def get_context_data(self, **kwargs) :
         context = super().get_context_data(**kwargs)
         position = Position.objects.get(id=self.kwargs["pk"])
-        context['allVendors'] = Contact.objects.all()
         context['vendors'] = Vendor.objects.filter(product=position)
+        vendor_array = []
+        for vendor in context['vendors']:
+            vendor_array.append(vendor.vendor)
+        free_vendors = []
+        for contact in Contact.objects.all():
+            if contact not in vendor_array:
+                free_vendors.append(contact)
+        context['allVendors'] = free_vendors 
         context['categoryValues'] = CategoryValue.objects.filter(category=Category.objects.get(id=self.kwargs['categoryId']))
         context['position'] = Position.objects.get(id=self.kwargs['pk'])
         return context
@@ -121,12 +128,13 @@ def editPositionExecute(request, mainCategoryId, categoryId, pk):
                 vendor.price = vendorsHolder[i+1]
                 vendor.save()
             except:
-                newVendor = Vendor(
-                    vendor = Contact.objects.get(name=vendorsHolder[i]),
-                    product = Position.objects.get(name=position.name),
-                    price = vendorsHolder[i+1]
-                )
-                newVendor.save()
+                if float(vendorsHolder[i+1]) > 0:
+                    newVendor = Vendor(
+                        vendor = Contact.objects.get(name=vendorsHolder[i]),
+                        product = Position.objects.get(name=position.name),
+                        price = vendorsHolder[i+1]
+                    )
+                    newVendor.save()
 
         position.name = data['name']
         position.amount = data['amount']
